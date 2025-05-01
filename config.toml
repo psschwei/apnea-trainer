@@ -7,7 +7,7 @@ initial_length = "1:30"
 # Change in training round length per round (MM:SS format)
 # Use negative values to decrease time (e.g., "-0:05" for -5 seconds)
 # Use positive values to increase time (e.g., "0:05" for +5 seconds)
-delta = "-0:05"
+delta = "0:05"
 
 # Rest period settings
 [rest]
@@ -16,7 +16,7 @@ initial_length = "0:30"
 # Change in rest period length per round (MM:SS format)
 # Use negative values to decrease time (e.g., "-0:02" for -2 seconds)
 # Use positive values to increase time (e.g., "0:02" for +2 seconds)
-delta = "-0:02"
+delta = "0:02"
 
 # Session settings
 [session]

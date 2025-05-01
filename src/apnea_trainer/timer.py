@@ -45,9 +45,16 @@ def parse_time(time_str):
         if is_negative:
             time_str = time_str[1:]  # Remove the minus sign
             
-        minutes, seconds = map(int, time_str.split(':'))
+        # Split and convert to integers
+        parts = time_str.split(':')
+        if len(parts) != 2:
+            raise ValueError("Time must be in MM:SS format")
+            
+        minutes = int(parts[0])
+        seconds = int(parts[1])
+        
         if seconds < 0 or seconds >= 60:
-            raise ValueError
+            raise ValueError("Seconds must be between 0 and 59")
             
         # Apply negative sign if needed
         if is_negative:
@@ -180,35 +187,35 @@ def main():
         if config:
             time_str = get_input_with_default(
                 "Enter the length of each training round (MM:SS format)",
-                config["training"]["initial_length"]
+                str(config["training"]["initial_length"])
             )
             training_delta = get_input_with_default(
-                "Enter the change in training round length per round (MM:SS format)",
-                config["training"]["delta"]
+                "Enter the change in training round length per round (MM:SS format, e.g., '-0:05' to decrease by 5 seconds)",
+                str(config["training"]["delta"])
             )
-            rounds = get_input_with_default(
+            rounds_str = get_input_with_default(
                 "Enter the number of rounds",
-                config["session"]["rounds"]
+                str(config["session"]["rounds"])
             )
             rest_str = get_input_with_default(
                 "Enter the rest period between rounds (MM:SS format)",
-                config["rest"]["initial_length"]
+                str(config["rest"]["initial_length"])
             )
             rest_delta = get_input_with_default(
-                "Enter the change in rest period length per round (MM:SS format)",
-                config["rest"]["delta"]
+                "Enter the change in rest period length per round (MM:SS format, e.g., '-0:02' to decrease by 2 seconds)",
+                str(config["rest"]["delta"])
             )
         else:
             time_str = input("Enter the length of each training round (MM:SS format, e.g., '1:30' for 1 minute and 30 seconds): ")
-            training_delta = input("Enter the change in training round length per round (MM:SS format, e.g., '0:05' to decrease by 5 seconds each round): ")
-            rounds = int(input("Enter the number of rounds: "))
+            training_delta = input("Enter the change in training round length per round (MM:SS format, e.g., '-0:05' to decrease by 5 seconds): ")
+            rounds_str = input("Enter the number of rounds: ")
             rest_str = input("Enter the rest period between rounds (MM:SS format, e.g., '0:30' for 30 seconds): ")
-            rest_delta = input("Enter the change in rest period length per round (MM:SS format, e.g., '0:02' to decrease by 2 seconds each round): ")
+            rest_delta = input("Enter the change in rest period length per round (MM:SS format, e.g., '-0:02' to decrease by 2 seconds): ")
         
         # Parse inputs
         minutes, seconds = parse_time(time_str)
         training_delta_mins, training_delta_secs = parse_time(training_delta)
-        rounds = int(rounds)
+        rounds = int(rounds_str)  # Convert rounds string to integer only once
         rest_minutes, rest_seconds = parse_time(rest_str)
         rest_delta_mins, rest_delta_secs = parse_time(rest_delta)
         
@@ -217,10 +224,10 @@ def main():
             return
             
         print(f"\nStarting {rounds} training rounds...")
-        print(f"Initial training round length: {minutes} minutes and {seconds} seconds")
-        print(f"Training round length change per round: {training_delta_mins} minutes and {training_delta_secs} seconds")
-        print(f"Initial rest period: {rest_minutes} minutes and {rest_seconds} seconds")
-        print(f"Rest period change per round: {rest_delta_mins} minutes and {rest_delta_secs} seconds")
+        print(f"Initial training round length: {format_time(minutes, seconds)}")
+        print(f"Training round length change per round: {format_time(training_delta_mins, training_delta_secs)}")
+        print(f"Initial rest period: {format_time(rest_minutes, rest_seconds)}")
+        print(f"Rest period change per round: {format_time(rest_delta_mins, rest_delta_secs)}")
         
         for round_num in range(1, rounds + 1):
             # Calculate current round times
@@ -238,13 +245,13 @@ def main():
             # Visual indicator when round starts
             print(f"\n🔔 Training Round {round_num} of {rounds} starting! 🔔")
             print('\a')
-            print(f"Round length: {current_minutes}:{current_seconds:02d}")
+            print(f"Round length: {format_time(current_minutes, current_seconds)}")
             countdown_timer(current_minutes, current_seconds)
             
             # Add a rest period after each round (including the last one)
             print(f"\n💤 Rest period starting...")
             print('\a')
-            print(f"Rest length: {current_rest_minutes}:{current_rest_seconds:02d}")
+            print(f"Rest length: {format_time(current_rest_minutes, current_rest_seconds)}")
             countdown_timer(current_rest_minutes, current_rest_seconds)
         
         # Final visual indicator when all rounds are complete
