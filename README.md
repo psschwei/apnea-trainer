@@ -12,9 +12,22 @@ A command-line timer for apnea training sessions.
 ## Installation
 
 1. Clone this repository
-2. Install dependencies:
+2. Create and activate a virtual environment using uv:
    ```bash
-   pip install -e .
+   # Create a new virtual environment
+   uv venv
+
+   # Activate the virtual environment
+   # On Linux/macOS:
+   source .venv/bin/activate
+   # On Windows:
+   .venv\Scripts\activate
+   ```
+
+3. Install the project using uv:
+   ```bash
+   # Install in development mode
+   uv pip install -e .
    ```
 
 ## Usage
@@ -62,6 +75,7 @@ rounds = 3
 ## Requirements
 
 - Python 3.x
+- uv (for package management)
 - tomli (for TOML file parsing)
 
 ## License
