@@ -9,13 +9,64 @@ A command-line timer for apnea training sessions with configurable training roun
 - Progressive training with customizable time deltas
 - Visual and audio notifications for round transitions
 - Support for multiple training rounds
+- Configuration via TOML file with interactive overrides
+- Support for multiple configuration files
+
+## Installation
+
+1. Clone the repository
+2. Create and activate a virtual environment using uv:
+```bash
+# Create a new virtual environment
+uv venv
+
+# Activate the virtual environment
+# On Linux/macOS:
+source .venv/bin/activate
+# On Windows:
+.venv\Scripts\activate
+```
+
+3. Install the project using uv:
+```bash
+# Install in development mode
+uv pip install -e .
+```
 
 ## Usage
 
-Run the timer script:
-```bash
-python timer.py
+### Using Configuration File
+
+The timer can be configured using a TOML file. You can create multiple configuration files for different training setups. Here's an example configuration:
+
+```toml
+[training]
+initial_length = "1:30"  # MM:SS format
+delta = -5              # seconds per round
+
+[rest]
+initial_length = "0:30"  # MM:SS format
+delta = -2              # seconds per round
+
+[session]
+rounds = 3
 ```
+
+### Running the Timer
+
+Run the timer script with the default configuration file:
+```bash
+python -m apnea_trainer.timer
+```
+
+Or specify a different configuration file:
+```bash
+python -m apnea_trainer.timer -c my_config.toml
+# or
+python -m apnea_trainer.timer --config my_config.toml
+```
+
+If a config file is present, you'll be prompted with default values that you can accept by pressing Enter, or override by entering new values.
 
 You'll be prompted to enter:
 1. Training round length (MM:SS format, e.g., "1:30" for 1 minute and 30 seconds)
@@ -38,7 +89,8 @@ The sequence would be:
 ## Requirements
 
 - Python 3.x
-- No external dependencies required
+- uv (for package management)
+- tomli>=2.0.1 (for TOML configuration file support)
 
 ## License
 
