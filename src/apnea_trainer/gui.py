@@ -12,6 +12,12 @@ class ApneaTrainerGUI:
         self.root.title("Apnea Trainer")
         self.root.geometry("400x600")
         
+        # Center the window
+        self.root.update_idletasks()  # Update the window to get its dimensions
+        x = (self.root.winfo_screenwidth() - self.root.winfo_width()) // 2
+        y = (self.root.winfo_screenheight() - self.root.winfo_height()) // 2
+        self.root.geometry(f"+{x}+{y}")
+        
         # Timer state
         self.is_running = False
         self.current_round = 0
@@ -242,6 +248,44 @@ class ApneaTrainerGUI:
 
 def main():
     root = tk.Tk()
+    
+    # Show warning dialog
+    warning_text = """WARNING: Breath-holding training can be dangerous and should only be performed under proper supervision.
+
+This application is provided for educational purposes only. The user assumes all risks and responsibilities associated with breath-holding activities.
+
+DO NOT use this application if you:
+- Have any medical conditions
+- Are not in good physical condition
+- Are not familiar with proper breath-holding techniques
+- Are not under proper supervision
+
+By clicking OK, you acknowledge that you understand these risks and will use this application responsibly."""
+    
+    # Create a toplevel window for the warning
+    warning_window = tk.Toplevel(root)
+    warning_window.title("Safety Warning")
+    warning_window.transient(root)  # Make it stay on top of the main window
+    warning_window.grab_set()  # Make it modal
+    
+    # Center the warning window
+    warning_window.geometry("600x400")  # Set a reasonable size
+    warning_window.update_idletasks()  # Update the window to get its dimensions
+    x = (warning_window.winfo_screenwidth() - warning_window.winfo_width()) // 2
+    y = (warning_window.winfo_screenheight() - warning_window.winfo_height()) // 2
+    warning_window.geometry(f"+{x}+{y}")
+    
+    # Add warning text
+    warning_label = ttk.Label(warning_window, text=warning_text, wraplength=550, justify=tk.CENTER, padding=20)
+    warning_label.pack(expand=True, fill=tk.BOTH)
+    
+    # Add OK button
+    ok_button = ttk.Button(warning_window, text="OK", command=warning_window.destroy)
+    ok_button.pack(pady=20)
+    
+    # Wait for the warning window to be closed
+    root.wait_window(warning_window)
+    
     app = ApneaTrainerGUI(root)
     root.mainloop()
 

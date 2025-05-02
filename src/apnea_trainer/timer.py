@@ -172,6 +172,24 @@ def get_input_with_default(prompt, default_value):
     return input(f"{prompt}: ")
 
 def main():
+    # Show warning message
+    warning_text = """WARNING: Breath-holding training can be dangerous and should only be performed under proper supervision.
+
+This application is provided for educational purposes only. The user assumes all risks and responsibilities associated with breath-holding activities.
+
+DO NOT use this application if you:
+- Have any medical conditions
+- Are not in good physical condition
+- Are not familiar with proper breath-holding techniques
+- Are not under proper supervision
+
+Press Enter to acknowledge these risks and continue, or Ctrl+C to exit..."""
+    
+    print("\n" + "="*80)
+    print(warning_text)
+    print("="*80 + "\n")
+    input()
+
     # Set up argument parser
     parser = argparse.ArgumentParser(description='Apnea Trainer Timer')
     parser.add_argument('-c', '--config', 

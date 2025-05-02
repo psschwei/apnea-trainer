@@ -1,4 +1,20 @@
-# Apnea Trainer Timer
+# Apnea Trainer
+
+## ⚠️ SAFETY WARNING ⚠️
+
+**WARNING: Breath-holding training can be dangerous and should only be performed under proper supervision.**
+
+This application is provided for educational purposes only. The user assumes all risks and responsibilities associated with breath-holding activities.
+
+**DO NOT use this application if you:**
+- Have any medical conditions
+- Are not in good physical condition
+- Are not familiar with proper breath-holding techniques
+- Are not under proper supervision
+
+By using this application, you acknowledge that you understand these risks and will use it responsibly.
+
+## Description
 
 A command-line and graphical timer for apnea training sessions.
 
