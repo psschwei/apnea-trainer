@@ -1,6 +1,6 @@
 # Apnea Trainer Timer
 
-A command-line timer for apnea training sessions.
+A command-line and graphical timer for apnea training sessions.
 
 ## Features
 
@@ -8,6 +8,8 @@ A command-line timer for apnea training sessions.
 - Adjustable rest periods
 - Support for TOML configuration file
 - Progress tracking for multiple rounds
+- Graphical user interface (GUI) with visual countdown
+- Command-line interface (CLI) for terminal use
 
 ## Installation
 
@@ -32,7 +34,24 @@ A command-line timer for apnea training sessions.
 
 ## Usage
 
-After installation, you can run the timer using:
+### Graphical Interface
+
+To run the graphical version:
+
+```bash
+apnea-trainer-gui
+```
+
+The GUI provides:
+- Input fields for all timer settings
+- Visual countdown display
+- Start/Stop controls
+- Round progress tracking
+- Audio notifications for round transitions
+
+### Command Line Interface
+
+To run the command-line version:
 
 ```bash
 apnea-trainer
@@ -77,6 +96,7 @@ rounds = 3
 - Python 3.x
 - uv (for package management)
 - tomli (for TOML file parsing)
+- tkinter (for GUI, included with Python)
 
 ## License
 
