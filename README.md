@@ -78,6 +78,32 @@ Or specify a configuration file:
 apnea-trainer -c path/to/config.toml
 ```
 
+### Docker
+
+To run using Docker:
+
+1. Build the Docker image:
+   ```bash
+   docker build -t apnea-trainer .
+   ```
+
+2. Run the container:
+   ```bash
+   docker run -p 8000:8000 apnea-trainer
+   ```
+
+The application will be available at http://localhost:8000
+
+## Development
+
+### Dependencies
+
+This project uses both `pyproject.toml` and `requirements.txt`:
+- `pyproject.toml` is used for local development and package metadata
+- `requirements.txt` is used for Docker builds
+
+**Important**: When adding or updating dependencies, make sure to update both files to keep them in sync.
+
 ## Configuration
 
 The timer can be configured using a TOML file. Here's an example configuration:
