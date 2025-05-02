@@ -80,19 +80,17 @@ apnea-trainer -c path/to/config.toml
 
 ### Docker
 
-To run using Docker:
+To build and run the Docker container:
 
-1. Build the Docker image:
-   ```bash
-   docker build -t apnea-trainer .
-   ```
+```bash
+# Build the image
+./scripts/build.sh
 
-2. Run the container:
-   ```bash
-   docker run -p 8000:8000 apnea-trainer
-   ```
+# Run the container
+docker run -p 8000:8000 apnea-trainer
+```
 
-The application will be available at http://localhost:8000
+Then open your browser to http://localhost:8000
 
 ## Development
 

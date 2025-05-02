@@ -34,3 +34,6 @@ ENV/
 # OS
 .DS_Store
 Thumbs.db 
+
+# requirements.txt should be created from pyproject.toml so no need to include in vcs
+requirements.txt
