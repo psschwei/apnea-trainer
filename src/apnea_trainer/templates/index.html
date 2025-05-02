@@ -4,224 +4,284 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apnea Trainer</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="/static/styles.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        button.stop {
+            background-color: #f44336;
+        }
+        .timer {
+            font-size: 48px;
+            text-align: center;
+            margin: 20px 0;
+            font-family: monospace;
+        }
+        .phase {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #666;
+        }
+        .round {
+            font-size: 18px;
+            text-align: center;
+            margin-bottom: 10px;
+            color: #666;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
-    <div class="container mx-auto px-4 py-8">
-        <div class="max-w-2xl mx-auto">
-            <h1 class="text-3xl font-bold text-center mb-8">Apnea Trainer</h1>
-            
-            <!-- Warning Message -->
-            <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-8">
-                <div class="flex">
-                    <div class="flex-shrink-0">
-                        <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-                        </svg>
-                    </div>
-                    <div class="ml-3">
-                        <p class="text-sm text-yellow-700">
-                            WARNING: Breath-holding training can be dangerous and should only be performed under proper supervision.
-                            This application is provided for educational purposes only.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Timer Display -->
-            <div class="bg-white rounded-lg shadow-lg p-8 mb-8 text-center">
-                <div id="timer" class="timer-display stopped">00:00</div>
-                <div id="phase" class="text-xl mt-4">Ready</div>
-                <div id="round" class="text-lg mt-2"></div>
-            </div>
-
-            <!-- Configuration Form -->
-            <div id="config-form" class="bg-white rounded-lg shadow-lg p-8">
-                <form id="timer-form" class="space-y-6">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Training Round Length (MM:SS)</label>
-                        <input type="text" name="training_time" value="{{ config.training_time }}" pattern="\d+:\d{2}" required
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Training Round Change per Round (MM:SS)</label>
-                        <input type="text" name="training_delta" value="{{ config.training_delta }}" pattern="-?\d+:\d{2}" required
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Rest Period Length (MM:SS)</label>
-                        <input type="text" name="rest_time" value="{{ config.rest_time }}" pattern="\d+:\d{2}" required
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Rest Period Change per Round (MM:SS)</label>
-                        <input type="text" name="rest_delta" value="{{ config.rest_delta }}" pattern="-?\d+:\d{2}" required
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700">Number of Rounds</label>
-                        <input type="number" name="rounds" value="{{ config.rounds }}" min="1" required
-                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    </div>
-                    
-                    <div class="flex space-x-4">
-                        <button type="submit" id="start-btn"
-                                class="flex-1 bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                            Start
-                        </button>
-                        <button type="button" id="stop-btn" disabled
-                                class="flex-1 bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">
-                            Stop
-                        </button>
-                    </div>
-                </form>
-            </div>
+<body>
+    <div class="container">
+        <h1>Apnea Trainer</h1>
+        
+        <div class="form-group">
+            <label for="training_time">Training Time (MM:SS):</label>
+            <input type="text" id="training_time" value="{{ config.training_time }}" pattern="[0-9]+:[0-5][0-9]">
+        </div>
+        
+        <div class="form-group">
+            <label for="training_delta">Training Time Change per Round (MM:SS):</label>
+            <input type="text" id="training_delta" value="{{ config.training_delta }}" pattern="-?[0-9]+:[0-5][0-9]">
+        </div>
+        
+        <div class="form-group">
+            <label for="rest_time">Rest Time (MM:SS):</label>
+            <input type="text" id="rest_time" value="{{ config.rest_time }}" pattern="[0-9]+:[0-5][0-9]">
+        </div>
+        
+        <div class="form-group">
+            <label for="rest_delta">Rest Time Change per Round (MM:SS):</label>
+            <input type="text" id="rest_delta" value="{{ config.rest_delta }}" pattern="-?[0-9]+:[0-5][0-9]">
+        </div>
+        
+        <div class="form-group">
+            <label for="rounds">Number of Rounds:</label>
+            <input type="text" id="rounds" value="{{ config.rounds }}" pattern="[0-9]+">
+        </div>
+        
+        <div class="timer" id="timer">--:--</div>
+        <div class="phase" id="phase"></div>
+        <div class="round" id="round"></div>
+        
+        <div class="controls">
+            <button id="startBtn">Start</button>
+            <button id="stopBtn" class="stop" disabled>Stop</button>
         </div>
     </div>
 
+    <!-- Add audio element -->
+    <audio id="beep" src="/static/sounds/beep.mp3" preload="auto"></audio>
+
     <script>
-        let ws = null;
-        const timerDisplay = document.getElementById('timer');
-        const phaseDisplay = document.getElementById('phase');
-        const roundDisplay = document.getElementById('round');
-        const startBtn = document.getElementById('start-btn');
-        const stopBtn = document.getElementById('stop-btn');
-        const configForm = document.getElementById('config-form');
-        const timerForm = document.getElementById('timer-form');
+        let eventSource = null;
+        let currentSessionId = null;
 
-        // Audio context for beeps
-        let audioContext = null;
+        const startBtn = document.getElementById('startBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const timer = document.getElementById('timer');
+        const phase = document.getElementById('phase');
+        const round = document.getElementById('round');
+        const beepSound = document.getElementById('beep');
 
-        function playBeep(count = 1, interval = 200) {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            
-            for (let i = 0; i < count; i++) {
-                setTimeout(() => {
-                    const oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
-                    
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
-                    
-                    oscillator.type = 'sine';
-                    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                    
-                    oscillator.start();
-                    oscillator.stop(audioContext.currentTime + 0.2);  // Back to 200ms
-                }, i * interval);
-            }
-        }
-
-        function connectWebSocket() {
-            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-            ws = new WebSocket(`${protocol}//${window.location.host}/ws`);
-            
-            ws.onopen = function() {
-                console.log('WebSocket connection established');
-                // Reset UI state on new connection
-                startBtn.disabled = false;
-                stopBtn.disabled = true;
-                timerDisplay.className = 'timer-display stopped';
-                phaseDisplay.textContent = 'Ready';
-                roundDisplay.textContent = '';
-            };
-            
-            ws.onmessage = function(event) {
-                console.log('Received message:', event.data);
-                const data = JSON.parse(event.data);
+        function playBeep(count = 1) {
+            return new Promise((resolve) => {
+                let played = 0;
                 
-                switch(data.type) {
-                    case 'tick':
-                        timerDisplay.textContent = data.time;
-                        timerDisplay.className = `timer-display ${data.phase}`;
-                        break;
-                        
-                    case 'round_start':
-                        roundDisplay.textContent = `Round ${data.round} of ${data.total_rounds}`;
-                        phaseDisplay.textContent = 'Training';
-                        break;
-                        
-                    case 'phase_change':
-                        phaseDisplay.textContent = data.phase === 'rest' ? 'Rest' : 'Training';
-                        // Play two beeps when training ends, single beep when rest ends
-                        playBeep(data.phase === 'rest' ? 2 : 1);
-                        break;
-                        
-                    case 'session_complete':
-                        phaseDisplay.textContent = 'Complete';
-                        timerDisplay.className = 'timer-display stopped';
-                        startBtn.disabled = false;
-                        stopBtn.disabled = true;
-                        playBeep(2);  // Two beeps at completion
-                        break;
-                        
-                    case 'status':
-                        console.log(data.message);
-                        break;
+                function playNext() {
+                    if (played < count) {
+                        // Reset the audio and play
+                        beepSound.currentTime = 0;
+                        beepSound.play()
+                            .then(() => {
+                                played++;
+                                console.log(`Played beep ${played} of ${count}`);
+                                if (played < count) {
+                                    // Wait for the beep to finish before playing the next one
+                                    setTimeout(playNext, 300);
+                                } else {
+                                    // Wait for the last beep to finish before resolving
+                                    setTimeout(resolve, 300);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error playing beep:', error);
+                                resolve(); // Resolve anyway to not block the flow
+                            });
+                    }
                 }
-            };
-            
-            ws.onerror = function(error) {
-                console.error('WebSocket error:', error);
-            };
-            
-            ws.onclose = function() {
-                console.log('WebSocket connection closed');
-                // Reset UI state
-                startBtn.disabled = false;
-                stopBtn.disabled = true;
-                timerDisplay.className = 'timer-display stopped';
-                phaseDisplay.textContent = 'Stopped';
-                roundDisplay.textContent = '';
-                // Reconnect after a short delay
-                setTimeout(connectWebSocket, 100);
-            };
+
+                playNext();
+            });
         }
 
-        timerForm.onsubmit = function(e) {
-            e.preventDefault();
-            const formData = new FormData(timerForm);
-            const config = {
-                action: 'start',
-                config: {
-                    training_time: formData.get('training_time'),
-                    training_delta: formData.get('training_delta'),
-                    rest_time: formData.get('rest_time'),
-                    rest_delta: formData.get('rest_delta'),
-                    rounds: formData.get('rounds')
+        function validateInputs() {
+            const inputs = ['training_time', 'training_delta', 'rest_time', 'rest_delta', 'rounds'];
+            for (const id of inputs) {
+                const input = document.getElementById(id);
+                if (!input.checkValidity()) {
+                    alert(`Invalid ${id.replace('_', ' ')} format`);
+                    return false;
                 }
-            };
-            
-            console.log('Sending config:', config);  // Add logging
-            ws.send(JSON.stringify(config));
-            startBtn.disabled = true;
-            stopBtn.disabled = false;
-        };
+            }
+            return true;
+        }
 
-        stopBtn.onclick = function() {
-            console.log('Sending stop command');  // Add logging
-            // Update UI immediately
+        async function startSession() {
+            if (!validateInputs()) return;
+
+            const config = {
+                training_time: document.getElementById('training_time').value,
+                training_delta: document.getElementById('training_delta').value,
+                rest_time: document.getElementById('rest_time').value,
+                rest_delta: document.getElementById('rest_delta').value,
+                rounds: document.getElementById('rounds').value
+            };
+
+            try {
+                const response = await fetch('/session/start', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(config)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to start session');
+                }
+
+                const data = await response.json();
+                currentSessionId = data.session_id;
+
+                // Connect to SSE
+                eventSource = new EventSource(`/session/${currentSessionId}/events`);
+                
+                eventSource.onmessage = function(event) {
+                    const data = JSON.parse(event.data);
+                    
+                    switch (data.type) {
+                        case 'round_start':
+                            round.textContent = `Round ${data.round} of ${data.total_rounds}`;
+                            if (data.is_last_round) {
+                                console.log('Starting last round...');
+                            }
+                            break;
+                        case 'tick':
+                            timer.textContent = data.time;
+                            if (data.time === "00:00" && data.phase === "rest") {
+                                // Check if this is the last round
+                                const roundInfo = round.textContent.split(' ');
+                                const currentRound = parseInt(roundInfo[1]);
+                                const totalRounds = parseInt(roundInfo[3]);
+                                
+                                if (currentRound === totalRounds) {
+                                    console.log('Last round complete, playing completion beeps...');
+                                    playBeep(3);
+                                }
+                            }
+                            break;
+                        case 'phase_change':
+                            phase.textContent = data.phase === 'training' ? 'Training' : 'Rest';
+                            // Regular phase change beeps
+                            playBeep(data.phase === 'rest' ? 2 : 1);
+                            break;
+                        case 'completion':
+                            console.log('Session complete, playing completion beeps...');
+                            playBeep(3);
+                            break;
+                        case 'status':
+                            console.log(data.message);
+                            break;
+                    }
+                };
+
+                eventSource.onerror = function() {
+                    console.error('EventSource failed');
+                    stopSession();
+                };
+
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+            } catch (error) {
+                console.error('Error starting session:', error);
+                alert('Failed to start session');
+            }
+        }
+
+        async function stopSession(onComplete) {
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+            }
+
+            if (currentSessionId) {
+                try {
+                    await fetch(`/session/${currentSessionId}/stop`, {
+                        method: 'POST'
+                    });
+                } catch (error) {
+                    console.error('Error stopping session:', error);
+                }
+                currentSessionId = null;
+            }
+
             startBtn.disabled = false;
             stopBtn.disabled = true;
-            timerDisplay.className = 'timer-display stopped';
-            phaseDisplay.textContent = 'Stopped';
-            roundDisplay.textContent = '';
-            // Send stop command
-            ws.send(JSON.stringify({ action: 'stop' }));
-            // The WebSocket will be closed by the server
-            // The onclose handler will handle reconnection
-        };
+            timer.textContent = '--:--';
+            phase.textContent = '';
+            round.textContent = '';
 
-        // Connect WebSocket when page loads
-        connectWebSocket();
+            if (onComplete) {
+                onComplete();
+            }
+        }
+
+        startBtn.addEventListener('click', startSession);
+        stopBtn.addEventListener('click', () => stopSession());
     </script>
 </body>
 </html> 
