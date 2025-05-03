@@ -1,10 +1,17 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, filedialog
 import time
 import threading
 import os
 import platform
+from pathlib import Path
 from .timer import parse_time, format_time, time_to_seconds, seconds_to_time, load_config
+
+def get_config_dir():
+    """Get the path to the application's config directory."""
+    config_dir = Path.home() / ".apnea-trainer"
+    config_dir.mkdir(exist_ok=True)
+    return config_dir
 
 class ApneaTrainerGUI:
     def __init__(self, root):
@@ -107,6 +114,16 @@ class ApneaTrainerGUI:
         self.rounds = ttk.Entry(rounds_frame, width=10)
         self.rounds.insert(0, str(self.config["session"]["rounds"]))
         self.rounds.pack(side=tk.LEFT, padx=5)
+        
+        # Configuration buttons
+        config_frame = ttk.Frame(settings_frame)
+        config_frame.pack(pady=10)
+        
+        self.save_button = ttk.Button(config_frame, text="Save Config", command=self.save_config)
+        self.save_button.pack(side=tk.LEFT, padx=5)
+        
+        self.load_button = ttk.Button(config_frame, text="Load Config", command=self.load_config)
+        self.load_button.pack(side=tk.LEFT, padx=5)
     
     def validate_inputs(self):
         try:
@@ -245,6 +262,93 @@ class ApneaTrainerGUI:
         total_seconds = time_to_seconds(minutes, seconds)
         delta_total = time_to_seconds(delta_minutes, delta_seconds)
         return seconds_to_time(total_seconds + delta_total)
+    
+    def save_config(self):
+        """Save current configuration to a TOML file."""
+        if not self.validate_inputs():
+            return
+            
+        file_path = filedialog.asksaveasfilename(
+            defaultextension=".toml",
+            filetypes=[("TOML files", "*.toml"), ("All files", "*.*")],
+            title="Save Configuration",
+            initialdir=get_config_dir()
+        )
+        
+        if not file_path:
+            return
+            
+        try:
+            config = {
+                "training": {
+                    "initial_length": self.training_length.get(),
+                    "delta": self.training_delta.get()
+                },
+                "rest": {
+                    "initial_length": self.rest_length.get(),
+                    "delta": self.rest_delta.get()
+                },
+                "session": {
+                    "rounds": int(self.rounds.get())
+                }
+            }
+            
+            with open(file_path, "w") as f:
+                f.write("# Training round settings\n")
+                f.write("[training]\n")
+                f.write(f"initial_length = \"{config['training']['initial_length']}\"\n")
+                f.write(f"delta = \"{config['training']['delta']}\"\n\n")
+                
+                f.write("# Rest period settings\n")
+                f.write("[rest]\n")
+                f.write(f"initial_length = \"{config['rest']['initial_length']}\"\n")
+                f.write(f"delta = \"{config['rest']['delta']}\"\n\n")
+                
+                f.write("# Session settings\n")
+                f.write("[session]\n")
+                f.write(f"rounds = {config['session']['rounds']}\n")
+                
+            messagebox.showinfo("Success", "Configuration saved successfully!")
+            
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to save configuration: {str(e)}")
+    
+    def load_config(self):
+        """Load configuration from a TOML file."""
+        file_path = filedialog.askopenfilename(
+            filetypes=[("TOML files", "*.toml"), ("All files", "*.*")],
+            title="Load Configuration",
+            initialdir=get_config_dir()
+        )
+        
+        if not file_path:
+            return
+            
+        try:
+            config = load_config(file_path)
+            if not config:
+                raise ValueError("Invalid configuration file")
+                
+            # Update GUI fields
+            self.training_length.delete(0, tk.END)
+            self.training_length.insert(0, config["training"]["initial_length"])
+            
+            self.training_delta.delete(0, tk.END)
+            self.training_delta.insert(0, config["training"]["delta"])
+            
+            self.rest_length.delete(0, tk.END)
+            self.rest_length.insert(0, config["rest"]["initial_length"])
+            
+            self.rest_delta.delete(0, tk.END)
+            self.rest_delta.insert(0, config["rest"]["delta"])
+            
+            self.rounds.delete(0, tk.END)
+            self.rounds.insert(0, str(config["session"]["rounds"]))
+            
+            messagebox.showinfo("Success", "Configuration loaded successfully!")
+            
+        except Exception as e:
+            messagebox.showerror("Error", f"Failed to load configuration: {str(e)}")
 
 def main():
     root = tk.Tk()

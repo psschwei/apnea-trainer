@@ -4,23 +4,45 @@ import tomli
 import os
 import sys
 import argparse
+from pathlib import Path
 
-def load_config(config_path="config.toml"):
+def get_config_dir():
+    """Get the path to the application's config directory."""
+    config_dir = Path.home() / ".apnea-trainer"
+    config_dir.mkdir(exist_ok=True)
+    return config_dir
+
+def load_config(config_path=None):
     """
     Load configuration from TOML file.
     
     Args:
-        config_path (str): Path to the config file
+        config_path (str): Path to the config file. If None, uses default config.
         
     Returns:
         dict: Configuration dictionary
     """
+    if config_path is None:
+        config_path = get_config_dir() / "config.toml"
+    
     try:
         with open(config_path, "rb") as f:
             return tomli.load(f)
     except FileNotFoundError:
         print(f"Config file {config_path} not found. Using default values.")
-        return None
+        return {
+            "training": {
+                "initial_length": "1:30",
+                "delta": "-0:05"
+            },
+            "rest": {
+                "initial_length": "0:30",
+                "delta": "-0:02"
+            },
+            "session": {
+                "rounds": 3
+            }
+        }
     except tomli.TOMLDecodeError as e:
         print(f"Error parsing config file: {e}")
         sys.exit(1)
