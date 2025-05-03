@@ -3,7 +3,6 @@ import datetime
 import tomli
 import os
 import sys
-import argparse
 from pathlib import Path
 
 def get_config_dir():

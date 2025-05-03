@@ -16,7 +16,7 @@ By using this application, you acknowledge that you understand these risks and w
 
 ## Description
 
-A command-line and graphical timer for apnea training sessions.
+A graphical timer for apnea training sessions.
 
 ## Features
 
@@ -24,8 +24,9 @@ A command-line and graphical timer for apnea training sessions.
 - Adjustable rest periods
 - Support for TOML configuration file
 - Progress tracking for multiple rounds
-- Graphical user interface (GUI) with visual countdown
-- Command-line interface (CLI) for terminal use
+- Visual countdown display
+- Start/Stop controls
+- Audio notifications for round transitions
 - Save/Load configuration files
 
 ## Installation
@@ -51,15 +52,13 @@ A command-line and graphical timer for apnea training sessions.
 
 ## Usage
 
-### Graphical Interface
-
-To run the graphical version:
+To run the application:
 
 ```bash
-apnea-trainer-gui
+apnea-trainer
 ```
 
-The GUI provides:
+The application provides:
 - Input fields for all timer settings
 - Visual countdown display
 - Start/Stop controls
@@ -67,34 +66,21 @@ The GUI provides:
 - Audio notifications for round transitions
 - Save/Load configuration files
 
-### Command Line Interface
-
-To run the command-line version:
-
-```bash
-apnea-trainer
-```
-
-Or specify a configuration file:
-```bash
-apnea-trainer -c path/to/config.toml
-```
-
 ### Building a Standalone Binary
 
-To build a standalone binary of the GUI application:
+To build a standalone binary of the application:
 
 ```bash
 # Make sure you're in your virtual environment
 source .venv/bin/activate  # or .venv\Scripts\activate on Windows
 
 # Build the binary
-./scripts/build.sh
+./scripts/build_binary.sh
 ```
 
 The binary will be created in the `dist` directory. You can then run it directly:
 ```bash
-./dist/apnea-trainer-gui
+./dist/apnea-trainer
 ```
 
 ## Development

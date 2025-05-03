@@ -1,7 +1,7 @@
 [project]
 name = "apnea_trainer"
 version = "0.1.0"
-description = "A command-line timer for apnea training sessions"
+description = "A graphical timer for apnea training sessions"
 authors = [
     {name = "Paul S. Schweigert", email = "paul@paulschweigert.com"}
 ]
@@ -22,8 +22,7 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project.scripts]
-apnea-trainer = "apnea_trainer.timer:main"
-apnea-trainer-gui = "apnea_trainer.gui:main"
+apnea-trainer = "apnea_trainer.gui:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/apnea_trainer"]

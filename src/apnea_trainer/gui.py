@@ -345,8 +345,6 @@ class ApneaTrainerGUI:
             self.rounds.delete(0, tk.END)
             self.rounds.insert(0, str(config["session"]["rounds"]))
             
-            messagebox.showinfo("Success", "Configuration loaded successfully!")
-            
         except Exception as e:
             messagebox.showerror("Error", f"Failed to load configuration: {str(e)}")
 
