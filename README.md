@@ -26,6 +26,7 @@ A command-line and graphical timer for apnea training sessions.
 - Progress tracking for multiple rounds
 - Graphical user interface (GUI) with visual countdown
 - Command-line interface (CLI) for terminal use
+- Save/Load configuration files
 
 ## Installation
 
@@ -64,6 +65,7 @@ The GUI provides:
 - Start/Stop controls
 - Round progress tracking
 - Audio notifications for round transitions
+- Save/Load configuration files
 
 ### Command Line Interface
 
@@ -78,33 +80,32 @@ Or specify a configuration file:
 apnea-trainer -c path/to/config.toml
 ```
 
-### Docker
+### Building a Standalone Binary
 
-To build and run the Docker container:
+To build a standalone binary of the GUI application:
 
 ```bash
-# Build the image
-./scripts/build.sh
+# Make sure you're in your virtual environment
+source .venv/bin/activate  # or .venv\Scripts\activate on Windows
 
-# Run the container
-docker run -p 8000:8000 apnea-trainer
+# Build the binary
+./scripts/build.sh
 ```
 
-Then open your browser to http://localhost:8000
+The binary will be created in the `dist` directory. You can then run it directly:
+```bash
+./dist/apnea-trainer-gui
+```
 
 ## Development
 
 ### Dependencies
 
-This project uses both `pyproject.toml` and `requirements.txt`:
-- `pyproject.toml` is used for local development and package metadata
-- `requirements.txt` is used for Docker builds
-
-**Important**: When adding or updating dependencies, make sure to update both files to keep them in sync.
+This project uses `pyproject.toml` for package metadata and dependencies.
 
 ## Configuration
 
-The timer can be configured using a TOML file. Here's an example configuration:
+The timer can be configured using a TOML file. Configuration files are stored in `~/.apnea-trainer/` by default. Here's an example configuration:
 
 ```toml
 # Training round settings

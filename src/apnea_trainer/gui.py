@@ -5,7 +5,7 @@ import threading
 import os
 import platform
 from pathlib import Path
-from .timer import parse_time, format_time, time_to_seconds, seconds_to_time, load_config
+from apnea_trainer.timer import parse_time, format_time, time_to_seconds, seconds_to_time, load_config
 
 def get_config_dir():
     """Get the path to the application's config directory."""
